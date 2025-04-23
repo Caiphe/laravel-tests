@@ -1,0 +1,28 @@
+name: Run Laravel Feature Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, bcmath, intl, pdo, sqlite
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Set up environment
+        run: cp .env.test .env
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Run tests
+        run: php artisan test
